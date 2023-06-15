@@ -14,13 +14,23 @@ class BaseModel(Model):
 
 '''5. La clase “Obra”, que es una de las clases que debe formar parte del modelo ORM, debe incluir los siguientes métodos de instancia con el objetivo de definir las diferentes etapas de avance de obra:'''
 
-class Obra(BaseModel):
+class Obra(BaseModel): # monto_contrato,comuna,barrio,direccion,lat,lng,fecha_inicio,fecha_fin_inicial,plazo_meses,porcentaje_avance,imagen_1,imagen_2,imagen_3,imagen_4,licitacion_oferta_empresa,licitacion_anio,contratacion_tipo,nro_contratacion,cuit_contratista,beneficiarios,mano_obra,compromiso,destacada,ba_elige,link_interno,pliego_descarga,expediente-numero,estudio_ambiental_descarga,financiamiento
+
     id = AutoField()
+    entorno = CharField()
     nombre = CharField()
+    etapa = CharField()
     tipo = CharField()
-    ubicacion = CharField()
+    area_responsable = CharField()
+    descripcion = CharField()
+    monto_contrato  = CharField()
+    comuna = CharField()
+    barrio = CharField()
+    direccion = CharField()
+    lat = CharField()
+    lng = CharField()
     fecha_inicio = DateField()
-    fecha_fin = DateField(null=True)
+    fecha_fin_inicial = DateField(null=True)
     costo = IntegerField()
 
 
