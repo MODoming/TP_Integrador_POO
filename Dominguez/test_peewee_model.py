@@ -1,8 +1,10 @@
-from peewee_model import *
+from modelo_orm import *
 
 if __name__== "__main__" :
-    #Creamos nuevas instancias de Category
-    category1 = Category(name="shoes")
+    tabla1 = Obra()
+
+    '''#Creamos nuevas instancias de Category
+    category1 = Obra(name="shoes")
     category2 = Category(name="technology")
 
     #Creamos nuevas instancias de Product
@@ -105,4 +107,4 @@ if __name__== "__main__" :
             .select(amount_total)
             .join(Product, on=(Sale.product == Product.id)).get())
     print("\nMonto total general de ventas:\n$", query.amount_total,"\n")
-    sqlite_db.close()
+    sqlite_db.close()'''
