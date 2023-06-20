@@ -3,10 +3,15 @@
 # Integrantes Dominguez Maximiliano, Kajita Lucas, Solano Santiago
 # Tema: Sistema de gestión de obras públicas con manejo de POO, importación de datasets desde un archivo csv y persistencia de objetos con ORM Peewee en una base de datos SQLite.
 
+from abc import ABC, abstractmethod
+import pandas as pd
+from peewee import *
+from modelo_orm import *
+
 '''Crear otro módulo “gestionar_obras.py” que contenga la definición de la clase abstracta
     “GestionarObra” y los siguientes métodos de clase:'''
 
-class GestionarObra():    
+class GestionarObra(ABC):    
     def extraer_datos(): # que debe incluir las sentencias necesarias para manipular el dataset a través de un objeto Dataframe del módulo “pandas”.
         pass
     def conectar_db(): # que debe incluir las sentencias necesarias para realizar la conexión a la base de datos “obras_urbanas.db”.
@@ -26,3 +31,5 @@ class GestionarObra():
     def obtener_indicadores(): # que debe incluir las sentencias necesarias para obtener información de las obras existentes en la base de datos SQLite a través de sentencias ORM.'''
         pass
 
+if __name__== "__main__" :
+    crear_tablas()
