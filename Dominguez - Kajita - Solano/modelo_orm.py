@@ -17,6 +17,7 @@ class BaseModel(Model):
 class Etapa(BaseModel):
     nombre = CharField(unique=True)
     lista = [
+        ("Null",),
         ("En Licitación",),
         ("En Ejecución",),
         ("Finalizada",),
@@ -38,6 +39,7 @@ class Etapa(BaseModel):
 class TipoObra(BaseModel):
     nombre = CharField(unique=True)
     lista = [
+        ("Null",),
         ("Arquitectura",),
         ("Escuela",),
         ("Espacio Público",),
@@ -61,6 +63,7 @@ class TipoObra(BaseModel):
 class AreaResponsable(BaseModel):
     nombre = CharField(unique=True)
     lista = [
+        ("Null",),
         ("Corporación Buenos Aires Sur",),
         ("Instituto de la Vivienda",),
         ("Ministerio de Cultura",),
@@ -86,7 +89,7 @@ class AreaResponsable(BaseModel):
 
 class Obra(BaseModel):
     id = AutoField()
-    entorno = CharField()
+    entorno = CharField(null=True)
     nombre = CharField(null=True)
     etapa = ForeignKeyField(Etapa)
     tipo = ForeignKeyField(TipoObra)
