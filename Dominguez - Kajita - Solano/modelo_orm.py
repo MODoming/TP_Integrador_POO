@@ -6,14 +6,9 @@
 '''3. Crear el módulo “modelo_orm.py” que contenga la definición de las clases y sus atributos correspondientes que considere necesarios, siguiendo el modelo ORM de Peewee para poder persistir los datos importados del dataset en una base de datos relacional de tipo SQLite llamada “obras_urbanas.db”, ubicada en la misma carpeta solución del proyecto. Aquí se debe incluir además la clase BaseModel heredando de peewee.Model.'''
 
 from peewee import *
+import gestionar_obras
 
-data_base = SqliteDatabase('./Dominguez - Kajita - Solano/obras_urbanas.db', pragmas={'journal_mode': 'wal'})
-try:
-    data_base.connect()
-    print("Base de datos conectada con exito. ")
-except OperationalError as e:
-    print("Se ha generado un error en la conexion a la BD.", e)
-    exit()
+data_base = gestionar_obras.data_base
 
 class BaseModel(Model):
     class Meta:
@@ -29,8 +24,6 @@ class AreaResponsable(BaseModel):
     nombre = CharField(unique=True)
 
 class Obra(BaseModel): 
-    # ID,entorno,nombre,etapa,tipo,area_responsable,descripcion,monto_contrato,comuna,barrio,direccion,lat,lng,fecha_inicio,fecha_fin_inicial,plazo_meses,porcentaje_avance,imagen_1,imagen_2,imagen_3,imagen_4,licitacion_oferta_empresa,licitacion_anio,contratacion_tipo,nro_contratacion,cuit_contratista,beneficiarios,mano_obra,compromiso,destacada,ba_elige,link_interno,pliego_descarga,expediente-numero,estudio_ambiental_descarga,financiamiento
-
     id = AutoField()
     entorno = CharField()
     nombre = CharField()
@@ -72,40 +65,44 @@ class Obra(BaseModel):
         db_table = 'obras'
     
     def nuevo_proyecto(self):
-        self.etapa = Etapa.get_or_create(nombre='Proyecto')[0]
+        self.etapa = Etapa.get_or_create(nombre='En Licitación')[0]
         self.save()
 
     def iniciar_contratacion(self, tipo_contratacion, nro_contratacion):
-        self.etapa = Etapa.get_or_create(nombre='Contratación')[0]
-        self.tipo_contratacion = tipo_contratacion
+        self.contratacion_tipo = tipo_contratacion
         self.nro_contratacion = nro_contratacion
         self.save()
 
     def adjudicar_obra(self, empresa, nro_expediente):
-        self.etapa = Etapa.get_or_create(nombre='Adjudicada')[0]
-        self.empresa = empresa
-        self.nro_expediente = nro_expediente
+        self.licitacion_oferta_empresa = empresa
+        self.expediente_numero = nro_expediente
         self.save()
 
     def iniciar_obra(self, destacada, fecha_inicio, fecha_fin_inicial, fuente_financiamiento, mano_obra):
-        self.etapa = Etapa.get_or_create(nombre='En Progreso')[0]
+        self.etapa = Etapa.get_or_create(nombre='En Ejecución')[0]
         self.destacada = destacada
         self.fecha_inicio = fecha_inicio
         self.fecha_fin_inicial = fecha_fin_inicial
-        self.fuente_financiamiento = fuente_financiamiento
+        self.financiamiento = fuente_financiamiento
         self.mano_obra = mano_obra
         self.save()
 
-    def actualizar_porcentaje_avance(self, porcentaje):
-        self.porcentaje_avance = porcentaje
+    def actualizar_porcentaje_avance(self):
+        self.porcentaje_avance = input(int("Ingrese el nuevo porcentaje de la obra: "))
         self.save()
+        print("Porcentaje actualizado. ")
 
-    def incrementar_plazo(self, meses):
-        self.plazo_meses += meses
-        self.save()
+    def incrementar_plazo(self):
+        try:
+            plazo_meses = input(int("Ingrese la cantidad de meses que quiere incrementar (solo nueros): "))
+            self.plazo_meses += plazo_meses
+            self.save()
+        except Exception as e:
+            print("Se ha generado un error ingresando los datos.", e)
+            print("Vuelva a intentarlo.")
 
-    def incrementar_mano_obra(self, cantidad):
-        self.mano_obra += cantidad
+    def incrementar_mano_obra(self, mano_obra):
+        self.mano_obra += mano_obra
         self.save()
 
     def finalizar_obra(self):
@@ -116,6 +113,7 @@ class Obra(BaseModel):
     def rescindir_obra(self):
         self.etapa = Etapa.get_or_create(nombre='Rescindida')[0]
         self.save()
+
 
 def crear_tablas():
     with data_base:
