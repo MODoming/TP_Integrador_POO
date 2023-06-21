@@ -87,58 +87,49 @@ class AreaResponsable(BaseModel):
 class Obra(BaseModel):
     id = AutoField()
     entorno = CharField()
-    nombre = CharField()
+    nombre = CharField(null=True)
     etapa = ForeignKeyField(Etapa)
     tipo = ForeignKeyField(TipoObra)
     area_responsable = ForeignKeyField(AreaResponsable)
-    descripcion = TextField()
-    monto_contrato = DecimalField(max_digits=10, decimal_places=2)
-    comuna = CharField()
-    barrio = CharField()
-    direccion = CharField()
-    lat = FloatField()
-    lng = FloatField()
+    descripcion = TextField(null=True)
+    monto_contrato = DecimalField(null=True)
+    comuna = CharField(null=True)
+    barrio = CharField(null=True)
+    direccion = CharField(null=True)
+    lat = FloatField(null=True)
+    lng = FloatField(null=True)
     fecha_inicio = DateField(null=True)
     fecha_fin_inicial = DateField(null=True)
-    plazo_meses = IntegerField()
-    porcentaje_avance = IntegerField()
-    imagen_1 = CharField()
-    imagen_2 = CharField()
-    imagen_3 = CharField()
-    imagen_4 = CharField()
-    licitacion_oferta_empresa = CharField()
-    licitacion_anio = IntegerField()
-    contratacion_tipo = CharField()
-    nro_contratacion = CharField()
-    cuit_contratista = CharField()
-    beneficiarios = IntegerField()
-    mano_obra = IntegerField()
-    compromiso = CharField()
-    destacada = BooleanField()
-    ba_elige = BooleanField()
-    link_interno = CharField()
-    pliego_descarga = CharField()
-    expediente_numero = CharField()
-    estudio_ambiental_descarga = CharField()
-    financiamiento = CharField()
+    plazo_meses = IntegerField(null=True)
+    porcentaje_avance = IntegerField(null=True)
+    imagen_1 = CharField(null=True)
+    imagen_2 = CharField(null=True)
+    imagen_3 = CharField(null=True)
+    imagen_4 = CharField(null=True)
+    licitacion_oferta_empresa = CharField(null=True)
+    licitacion_anio = IntegerField(null=True)
+    contratacion_tipo = CharField(null=True)
+    nro_contratacion = CharField(null=True)
+    cuit_contratista = CharField(null=True)
+    beneficiarios = IntegerField(null=True)
+    mano_obra = IntegerField(null=True)
+    compromiso = CharField(null=True)
+    destacada = BooleanField(null=True)
+    ba_elige = BooleanField(null=True)
+    link_interno = CharField(null=True)
+    pliego_descarga = CharField(null=True)
+    expediente_numero = CharField(null=True)
+    estudio_ambiental_descarga = CharField(null=True)
+    financiamiento = CharField(null=True)
 
     class Meta:
         db_table = 'obras'
 
-    def nuevo_proyecto(self, entorno, nombre, tipo, a_responsable, descripcion, monto="", comuna="", barrio="", direccion=""):
-        '''etapa_proyecto, _ = Etapa.get_or_create(nombre='En Licitación')
-        self.etapa = etapa_proyecto'''
-        self.entorno = entorno
-        self.nombre = nombre
-        self.tipo = tipo
-        self.area_responsable = a_responsable
-        self.descripcion = descripcion
-        self.monto_contrato = monto
-        self.comuna = comuna
-        self.barrio = barrio
-        self.direccion = direccion
-        self.save()
-
+    @classmethod
+    def nuevo_proyecto(cls, entorno, nombre, etapa, tipo, a_responsable, descripcion, monto, comuna, barrio, direccion):
+        nueva_obra = cls.create(entorno=entorno, nombre=nombre, etapa=etapa, tipo=tipo, area_responsable=a_responsable, descripcion=descripcion, monto=monto, comuna=comuna, barrio=barrio, direccion=direccion)
+        return nueva_obra
+    
     def iniciar_contratacion(self):
         tipo_contratacion = input("Ingrese el tipo de contratacion: ")
         nro_contratacion = input("Ingrese el numero de contratacion: ")

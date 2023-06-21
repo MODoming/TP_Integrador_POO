@@ -54,28 +54,30 @@ class GestionarObra(ABC):
 
     @classmethod
     def nueva_obra(cls):
-        entorno = input("Ingrese el entorno de la obra: ")
-        nombre = input("Ingrese el nombre de la obra: ")
-        tipo = input("Ingrese el tipo de obra: ")
+        entorno = "casa" #input("Ingrese el entorno de la obra: ")
+        nombre = "Casita" #input("Ingrese el nombre de la obra: ")
+        tipo = "Vivienda" #input("Ingrese el tipo de obra: ")
         tipo_obra = TipoObra.get_or_none(nombre=tipo)
         while tipo_obra is None:
             print("El tipo de obra ingresado no existe. Intente nuevamente.")
             TipoObra.imprimir_lista()
             tipo = input("Ingrese el nombre del tipo de obra: ")
             tipo_obra = TipoObra.get_or_none(nombre=tipo)
-        area = input("Ingrese el area responsable de la obra: ")
+        area = "Instituto de la Vivienda" #input("Ingrese el area responsable de la obra: ")
         a_resp = AreaResponsable.get_or_none(nombre=area)
         while a_resp is None:
             print("El area responsable ingresada no existe. Intente nuevamente.")
             AreaResponsable.imprimir_lista()
             area = input("Ingrese el area responsable de la obra: ")
             a_resp = AreaResponsable.get_or_none(nombre=area)
-        descripcion = input("Ingrese una descripcion de la obra: ")
-        monto = input("Ingrese el monto expresado en pesos: ")
-        direccion = input("Ingrese el domicilio de la obra: ")
-        comuna = input("Ingrese la comuna: ")
+        descripcion = "Casas" # input("Ingrese una descripcion de la obra: ")
+        monto = "12345678" #input("Ingrese el monto expresado en pesos: ")
+        direccion = "Calle Falsa 1234" #input("Ingrese el domicilio de la obra: ")
+        comuna = "15" #input("Ingrese la comuna: ")
         barrio = input("Ingrese el barrio: ")
-        nueva_obra = Obra.nuevo_proyecto(entorno, nombre, tipo, a_resp, descripcion, monto, comuna, barrio, direccion).create()
+        nueva_obra = Obra.nuevo_proyecto(entorno=entorno, nombre=nombre, etapa='En Licitación', tipo=tipo, a_responsable=a_resp, descripcion=descripcion, monto=monto, comuna=comuna, barrio=barrio, direccion=direccion)
+        nueva_obra.save()
+        data_base.close()
         return nueva_obra
 
     @classmethod
@@ -83,7 +85,10 @@ class GestionarObra(ABC):
         pass
 
 if __name__== "__main__" :
-    # DataFrame = GestionarObra.extraer_datos()
-    # GestionarObra.mapear_orm()
-    GestionarObra.nueva_obra()
+    GestionarObra.mapear_orm()
+
+    obra1 = GestionarObra.nueva_obra()
+    obra2 = GestionarObra.nueva_obra()
+
+
 
