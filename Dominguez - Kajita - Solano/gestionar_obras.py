@@ -28,30 +28,62 @@ class GestionarObra(ABC):
         return data_base
 
     @classmethod
-    def mapear_orm(cls): # que debe incluir las sentencias necesarias para realizar la creación de la estructura de la base de datos (tablas y relaciones) utilizando el método de instancia “create_tables(list)” del módulo peewee.
-        db = cls.conectar_db()
-        db.create_tables([TipoObra, AreaResponsable, Etapa, Obra])
+    def mapear_orm(cls):
+        try:
+            db = cls.conectar_db()
+            db.create_tables([TipoObra, AreaResponsable, Etapa, Obra])
+            try:
+                Etapa.cargar_lista()
+                TipoObra.cargar_lista()
+                AreaResponsable.cargar_lista()
+            except:
+                print("Los datos ya existen.")
+        except Exception as e:
+            print(e)
 
     @classmethod
-    def limpiar_datos(cls): # que debe incluir las sentencias necesarias para realizar la “limpieza” de los datos nulos y no accesibles del Dataframe.
-        pass
+    def limpiar_datos(cls, df):
+        cleaned_df = df.dropna()  # Eliminar filas con valores nulos
+        cleaned_df = cleaned_df.drop_duplicates()  # Eliminar filas duplicadas
+        return cleaned_df
+
 
     @classmethod
     def cargar_datos(cls): # que debe incluir las sentencias necesarias para persistir los datos de las obras (ya transformados y “limpios”) que contiene el objeto Dataframe en la base de datos relacional SQLite. Para ello se debe utilizar el método de clase Model create() en cada una de las clase del modelo ORM definido.
         pass
 
     @classmethod
-    def nueva_obra(cls): # que debe incluir las sentencias necesarias para crear nuevas instancias de Obra. Se deben considerar los siguientes requisitos:
-            #• Todos los valores requeridos para la creación de estas nuevas instancias deben ser ingresados por teclado.
-            #• Para los valores correspondientes a registros de tablas relacionadas (foreign key), el valor ingresado debe buscarse en la tabla correspondiente mediante sentencia de búsqueda ORM, para obtener la instancia relacionada, si el valor ingresado no existe en la tabla, se le debe informar al usuario y solicitarle un nuevo ingreso por teclado.
-            #• Para persistir en la BD los datos de la nueva instancia de Obra debe usarse el método save() de Model del módulo peewee.
-            #• Este método debe retornar la nueva instancia de obra.
-            
-        pass
+    def nueva_obra(cls):
+        entorno = input("Ingrese el entorno de la obra: ")
+        nombre = input("Ingrese el nombre de la obra: ")
+        tipo = input("Ingrese el tipo de obra: ")
+        tipo_obra = TipoObra.get_or_none(nombre=tipo)
+        while tipo_obra is None:
+            print("El tipo de obra ingresado no existe. Intente nuevamente.")
+            TipoObra.imprimir_lista()
+            tipo = input("Ingrese el nombre del tipo de obra: ")
+            tipo_obra = TipoObra.get_or_none(nombre=tipo)
+        area = input("Ingrese el area responsable de la obra: ")
+        a_resp = AreaResponsable.get_or_none(nombre=area)
+        while a_resp is None:
+            print("El area responsable ingresada no existe. Intente nuevamente.")
+            AreaResponsable.imprimir_lista()
+            area = input("Ingrese el area responsable de la obra: ")
+            a_resp = AreaResponsable.get_or_none(nombre=area)
+        descripcion = input("Ingrese una descripcion de la obra: ")
+        monto = input("Ingrese el monto expresado en pesos: ")
+        direccion = input("Ingrese el domicilio de la obra: ")
+        comuna = input("Ingrese la comuna: ")
+        barrio = input("Ingrese el barrio: ")
+        nueva_obra = Obra.nuevo_proyecto(entorno, nombre, tipo, a_resp, descripcion, monto, comuna, barrio, direccion).create()
+        return nueva_obra
 
     @classmethod
     def obtener_indicadores(cls): # que debe incluir las sentencias necesarias para obtener información de las obras existentes en la base de datos SQLite a través de sentencias ORM.'''
         pass
 
 if __name__== "__main__" :
-    crear_tablas()
+    # DataFrame = GestionarObra.extraer_datos()
+    # GestionarObra.mapear_orm()
+    GestionarObra.nueva_obra()
+
