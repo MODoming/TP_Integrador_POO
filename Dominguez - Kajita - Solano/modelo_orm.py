@@ -130,10 +130,13 @@ class Obra(BaseModel):
 
     @classmethod
     def nuevo_proyecto(cls, entorno, nombre, etapa, tipo, a_responsable, descripcion, monto, comuna, barrio, direccion):
-        nueva_obra = cls.create(entorno=entorno, nombre=nombre, etapa=etapa, tipo=tipo, area_responsable=a_responsable, descripcion=descripcion, monto=monto, comuna=comuna, barrio=barrio, direccion=direccion)
+        n_etapa, created = Etapa.get_or_create(nombre="Proyecto")
+        nueva_obra = cls.create(entorno=entorno, nombre=nombre, etapa=n_etapa.nombre, tipo=tipo.nombre, area_responsable=a_responsable.nombre, descripcion=descripcion, monto_contrato=monto, comuna=comuna, barrio=barrio, direccion=direccion)
         return nueva_obra
     
     def iniciar_contratacion(self):
+        n_etapa, created = Etapa.get_or_create(nombre="En Licitación")
+        self.etapa = n_etapa.nombre
         tipo_contratacion = input("Ingrese el tipo de contratacion: ")
         nro_contratacion = input("Ingrese el numero de contratacion: ")
         self.contratacion_tipo = tipo_contratacion
@@ -141,6 +144,8 @@ class Obra(BaseModel):
         self.save()
 
     def adjudicar_obra(self):
+        n_etapa, created = Etapa.get_or_create(nombre="En Ejecución")
+        self.etapa = n_etapa.nombre
         empresa = input("Ingrese el nombre de la empresa adjudicatoria: ")
         nro_expediente = input("Ingrese el numero de expediente: ")
         self.licitacion_oferta_empresa = empresa
@@ -159,7 +164,7 @@ class Obra(BaseModel):
             diferencia = (f_final.date() - f_inicial.date()).days
             meses = diferencia // 30
             etapa_ejecucion, _ = Etapa.get_or_create(nombre='En Ejecución')
-            self.etapa = etapa_ejecucion
+            self.etapa = etapa_ejecucion.nombre
             self.destacada = destacada
             self.fecha_inicio = f_inicial.date()
             self.fecha_fin_inicial = f_final.date()
